@@ -1,5 +1,6 @@
 /*
- * hello2.c - First part of CS433 HW2
+ * hello2.c - Second part of CS433 HW2
+ * Use __initdata
  * Created by Michael Anderson
  */
 
