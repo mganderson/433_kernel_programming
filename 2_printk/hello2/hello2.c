@@ -21,7 +21,7 @@ static int __init hello2_init(void) {
 }
 
 static void __exit hello2_exit(void) {
-	printk(KERN_INFO "Michael Anderson: Exiting Hello2 module...");
+	printk(KERN_INFO "Michael Anderson: Exiting Hello2 module...\n");
 }
 
 module_init(hello2_init);
