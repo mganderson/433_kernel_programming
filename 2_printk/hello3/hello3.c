@@ -6,6 +6,12 @@
 
 #include <linux/module.h> // Per LKMPG, required for *ALL* modules
 #include <linux/kernel.h> // Needed for macro expansion for log levels
+#include <linux/init.h>   // Needed for __init, __exit, __initdata macros
+#include <linux/moduleparam.h>
+
+static char *mystring = "YOLO";
+
+module_param(mystring, charp, 0000);
 
 static int __init hello3_init(void) {
 	/*
@@ -16,6 +22,10 @@ static int __init hello3_init(void) {
 	 */
 	printk(KERN_INFO "Michael Anderson: Loading Hello3 module - Hello World 3.\n");
 	printk(KERN_INFO "============================================\n");
+	printk(KERN_INFO "Name: %s\n", mystring);
+	printk(KERN_INFO "Street: %s\n", mystring);
+	printk(KERN_INFO "City: %s\n", mystring);
+	printk(KERN_INFO "ZIP code: %s\n", mystring);
 	return 0; // Non-0 indicates init_module failed - module can't be loaded (LKMPG)
 }
 
