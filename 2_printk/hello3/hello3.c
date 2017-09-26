@@ -9,9 +9,17 @@
 #include <linux/init.h>   // Needed for __init, __exit, __initdata macros
 #include <linux/moduleparam.h>
 
-static char *mystring = "YOLO";
+// Default values if no corresponding command line param is passed:
+static char *bevParam = "tea";
+static int yearParam = 1900;
+static char *catParam = "Clancy";
+static short int numParam = 3;
 
-module_param(mystring, charp, 0000);
+module_param(bevParam, charp, 0000);
+module_param(yearParam,int, 0);
+module_param(catParam, charp, 0000);
+module_param(numParam, short, 0);
+
 
 static int __init hello3_init(void) {
 	/*
@@ -22,10 +30,10 @@ static int __init hello3_init(void) {
 	 */
 	printk(KERN_INFO "Michael Anderson: Loading Hello3 module - Hello World 3.\n");
 	printk(KERN_INFO "============================================\n");
-	printk(KERN_INFO "Name: %s\n", mystring);
-	printk(KERN_INFO "Street: %s\n", mystring);
-	printk(KERN_INFO "City: %s\n", mystring);
-	printk(KERN_INFO "ZIP code: %s\n", mystring);
+	printk(KERN_INFO "Favorite morning beverage: %s\n", bevParam);
+	printk(KERN_INFO "Year of birth: %d\n", yearParam);
+	printk(KERN_INFO "Cat's name: %s\n", catParam);
+	printk(KERN_INFO "Favorite tiny number: %hd\n", numParam);
 	return 0; // Non-0 indicates init_module failed - module can't be loaded (LKMPG)
 }
 
