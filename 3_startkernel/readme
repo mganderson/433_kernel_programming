@@ -1,0 +1,26 @@
+Note: the modified files that were actually used for this assignment 
+are those in modified_kernel_files_4.9.54.  Initially, I had attempted 
+to compile the 4.12.14 kernel (from a system that had been running 
+Mint using kernel 4.8.x) and, while compilation would complete 
+successfully, the system would not boot after selecting the new kernel 
+version in the GRUB menu.
+
+I was able to successfully modify and compile the 4.9.54 kernel.
+
+The functions (and the files) that were modified are as follows:
+
+setup_arch(&command_line)
+In /arch/x86/kernel/setup.c
+
+setup_command_line(command_line)
+In /init/main.c
+
+mm_init()
+In /init/main.c
+
+init_timers()
+In /kernel/time/timer.c 
+
+pidhash_init()
+In /kernel/pid.c
+
