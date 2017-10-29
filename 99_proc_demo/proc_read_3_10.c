@@ -28,7 +28,7 @@ struct file_operations proc_fops = {
 void create_new_proc_entry(void) {
 	proc_create("hello",0,NULL,&proc_fops);
 
-	msg=" Hello World ";
+	msg="HELLO! From Michael from within /proc !!\n";
 	len=strlen(msg);
 	temp=len;
 	printk(KERN_INFO "1.len=%d",len);
