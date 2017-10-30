@@ -43,10 +43,48 @@ void show_mem(unsigned int filter)
 	printk("Michael Anderson: %lu pages cma reserved\n", totalcma_pages);
 #endif
 #ifdef CONFIG_QUICKLIST
-	printk("%lu pages in pagetable cache\n",
+	printk("Michael Anderson: %lu pages in pagetable cache\n",
 		quicklist_total_size());
 #endif
 #ifdef CONFIG_MEMORY_FAILURE
-	printk("%lu pages hwpoisoned\n", atomic_long_read(&num_poisoned_pages));
+	printk("Michael Anderson: %lu pages hwpoisoned\n", atomic_long_read(&num_poisoned_pages));
 #endif
+}
+
+/* Michael Anderson: Attempt to recreate /proc/buddyinfo information 
+ * Based *HEAVILY* on show_mem() above
+ */
+void show_buddyinfo() {
+	// Each numa node is an entry in pgdat (?)
+	// We expect to have only 1 node in pgdat
+	pg_data_t *pgdat;
+	unsigned long total = 0, reserved = 0, highmem = 0;
+	
+	// Again, we expect only one node, but this
+	// loop will iterate over each node
+	for_each_online_pgdat(pgdat) {
+		unsigned long flags;
+		int zoneid;
+		
+		// Semaphore related? Not sure.
+		pgdat_resize_lock(pgdat, &flags);
+		
+		// Iterate over each zone in a given node
+		for (zoneid = 0; zoneid < MAX_NR_ZONES; zoneid++) {
+			struct zone *zone = &pgdat->node_zones[zoneid];
+			// Go on to the next iteration if zone not populated
+			if (!populated_zone(zone))
+				continue;
+
+			total += zone->present_pages;
+			reserved += zone->present_pages - zone->managed_pages;
+
+			if (is_highmem_idx(zoneid))
+				highmem += zone->present_pages;
+		}
+		// Assuming this is also semaphore related
+		pgdat_resize_unlock(pgdat, &flags);
+					
+	}
+	
 }
