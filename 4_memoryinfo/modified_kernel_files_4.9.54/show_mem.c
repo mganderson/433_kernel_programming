@@ -78,7 +78,7 @@ void show_buddyinfo() {
 			struct zone *zone = &pgdat->node_zones[zoneid];
 			
 			printk("Node %d\t", nodeCount);
-			printk("Zone %d\t", zoneCount);
+			printk("Zone %s\t", zone->name);
 			
 			// Go on to the next iteration if zone not populated
 			if (!populated_zone(zone))
