@@ -60,7 +60,7 @@ void show_buddyinfo() {
 	// Each numa node is an entry in pgdat (?)
 	// We expect to have only 1 node in pgdat
 	pg_data_t *pgdat;
-	int nodeCount, zoneCount;
+	int nodeCount;
 	
 	// Again, we expect only one node, but this
 	// loop will iterate over each node
@@ -73,31 +73,53 @@ void show_buddyinfo() {
 		pgdat_resize_lock(pgdat, &flags);
 		
 		// Iterate over each zone in a given node	
-		zoneCount = 0;
 		for (zoneid = 0; zoneid < MAX_NR_ZONES; zoneid++) {
 			struct zone *zone = &pgdat->node_zones[zoneid];
-			
-			printk("Node %d\t", nodeCount);
-			printk("Zone %s\t", zone->name);
 			
 			// Go on to the next iteration if zone not populated
 			if (!populated_zone(zone))
 				continue;
-			
+
+			// I know this code is awful, but easiest way
+			// I am aware of of getting print k statement all
+			// on one line, as in /proc/buddyinfo for orders 0-10	
+			printk( "Node %lu\t"
+				"Zone %s\t",
+				"%lu\t" 
+				"%lu\t" 
+				"%lu\t" 
+				"%lu\t" 
+				"%lu\t" 
+				"%lu\t" 
+				"%lu\t" 
+				"%lu\t" 
+				"%lu\t" 
+				"%lu\t" 
+				"%lu\t\n", 
+				nodeCount,
+				zone->name,
+				zone->free_area[0]->nr_free,
+				zone->free_area[1]->nr_free,
+				zone->free_area[2]->nr_free,
+				zone->free_area[3]->nr_free,
+				zone->free_area[4]->nr_free,
+				zone->free_area[5]->nr_free,
+				zone->free_area[6]->nr_free,
+				zone->free_area[7]->nr_free,
+				zone->free_area[8]->nr_free,
+				zone->free_area[9]->nr_free,
+				zone->free_area[10]->nr_free,
+				zone->free_area[11]->nr_free
+				);
+			// Forget this - just insert the 11 orders into
+			// the printk statement above real ugly like
+			/*			
 			// Iterate over free_area[order] from 0 to 10
 			for (order = 0; order < 11; order++) {
 				struct free_area *free_area = &zone->free_area[order]; 
 				printk("%d\t", free_area->nr_free);						
 			} 
-			/*
-			total += zone->present_pages;
-			reserved += zone->present_pages - zone->managed_pages;
-
-			if (is_highmem_idx(zoneid))
-				highmem += zone->present_pages;
 			*/
-			zoneCount++;
-			printk("\n");
 		}
 		// Assuming this is also semaphore related
 		pgdat_resize_unlock(pgdat, &flags);
