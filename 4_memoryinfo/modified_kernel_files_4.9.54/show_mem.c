@@ -83,19 +83,19 @@ void show_buddyinfo() {
 			// I know this code is awful, but easiest way
 			// I am aware of of getting print k statement all
 			// on one line, as in /proc/buddyinfo for orders 0-10	
-			printk( "Michael Anderson: Node %lu\t"
+			printk( "Michael Anderson: Node %d\t"
 				"Zone %s\t"
-				"%d\t" 
-				"%d\t" 
-				"%d\t" 
-				"%d\t" 
-				"%d\t" 
-				"%d\t" 
-				"%d\t" 
-				"%d\t" 
-				"%d\t" 
-				"%d\t" 
-				"%d\n", 
+				"%lu\t" 
+				"%lu\t" 
+				"%lu\t" 
+				"%lu\t" 
+				"%lu\t" 
+				"%lu\t" 
+				"%lu\t" 
+				"%lu\t" 
+				"%lu\t" 
+				"%lu\t" 
+				"%lu\n", 
 				nodeCount,
 				zone->name,
 				zone->free_area[0].nr_free,
