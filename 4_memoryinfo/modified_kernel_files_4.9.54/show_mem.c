@@ -83,33 +83,32 @@ void show_buddyinfo() {
 			// I know this code is awful, but easiest way
 			// I am aware of of getting print k statement all
 			// on one line, as in /proc/buddyinfo for orders 0-10	
-			printk( "Node %lu\t"
-				"Zone %s\t",
-				"%lu\t" 
-				"%lu\t" 
-				"%lu\t" 
-				"%lu\t" 
-				"%lu\t" 
-				"%lu\t" 
-				"%lu\t" 
-				"%lu\t" 
-				"%lu\t" 
-				"%lu\t" 
-				"%lu\t\n", 
+			printk( "Michael Anderson: Node %lu\t"
+				"Zone %s\t"
+				"%d\t" 
+				"%d\t" 
+				"%d\t" 
+				"%d\t" 
+				"%d\t" 
+				"%d\t" 
+				"%d\t" 
+				"%d\t" 
+				"%d\t" 
+				"%d\t" 
+				"%d\n", 
 				nodeCount,
 				zone->name,
-				zone->free_area[0]->nr_free,
-				zone->free_area[1]->nr_free,
-				zone->free_area[2]->nr_free,
-				zone->free_area[3]->nr_free,
-				zone->free_area[4]->nr_free,
-				zone->free_area[5]->nr_free,
-				zone->free_area[6]->nr_free,
-				zone->free_area[7]->nr_free,
-				zone->free_area[8]->nr_free,
-				zone->free_area[9]->nr_free,
-				zone->free_area[10]->nr_free,
-				zone->free_area[11]->nr_free
+				zone->free_area[0].nr_free,
+				zone->free_area[1].nr_free,
+				zone->free_area[2].nr_free,
+				zone->free_area[3].nr_free,
+				zone->free_area[4].nr_free,
+				zone->free_area[5].nr_free,
+				zone->free_area[6].nr_free,
+				zone->free_area[7].nr_free,
+				zone->free_area[8].nr_free,
+				zone->free_area[9].nr_free,
+				zone->free_area[10].nr_free
 				);
 			// Forget this - just insert the 11 orders into
 			// the printk statement above real ugly like
