@@ -662,6 +662,7 @@ asmlinkage __visible void __init start_kernel(void)
 	
 	/* BEGIN EDIT HW4 */
 	show_mem(0x0001u); //See include/linux/mm.h line 1136
+	show_buddyinfo();
 	/* END EDIT HW4 */
 
 	/* Do the rest non-__init'ed, we're now alive */
