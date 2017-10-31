@@ -55,36 +55,53 @@ void show_mem(unsigned int filter)
  * Based *HEAVILY* on show_mem() above
  */
 void show_buddyinfo() {
+	printk("Michael Anderson: Inside show_buddyinfo() within show_mem.c\n");
+	
 	// Each numa node is an entry in pgdat (?)
 	// We expect to have only 1 node in pgdat
 	pg_data_t *pgdat;
-	unsigned long total = 0, reserved = 0, highmem = 0;
+	int nodeCount, zoneCount;
 	
 	// Again, we expect only one node, but this
 	// loop will iterate over each node
+	nodeCount = 0;
 	for_each_online_pgdat(pgdat) {
 		unsigned long flags;
-		int zoneid;
+		int zoneid, order;
 		
 		// Semaphore related? Not sure.
 		pgdat_resize_lock(pgdat, &flags);
 		
-		// Iterate over each zone in a given node
+		// Iterate over each zone in a given node	
+		zoneCount = 0;
 		for (zoneid = 0; zoneid < MAX_NR_ZONES; zoneid++) {
 			struct zone *zone = &pgdat->node_zones[zoneid];
+			
+			printk("Node %d\t", nodeCount);
+			printk("Zone %d\t", zoneCount);
+			
 			// Go on to the next iteration if zone not populated
 			if (!populated_zone(zone))
 				continue;
-
+			
+			// Iterate over free_area[order] from 0 to 10
+			for (order = 0; order < 11; order++) {
+				struct free_area *free_area = &zone->free_area[order]; 
+				printk("%d\t", free_area->nr_free);						
+			} 
+			/*
 			total += zone->present_pages;
 			reserved += zone->present_pages - zone->managed_pages;
 
 			if (is_highmem_idx(zoneid))
 				highmem += zone->present_pages;
+			*/
+			zoneCount++;
+			printk("\n");
 		}
 		// Assuming this is also semaphore related
 		pgdat_resize_unlock(pgdat, &flags);
-					
+		nodeCount++;
 	}
 	
 }
