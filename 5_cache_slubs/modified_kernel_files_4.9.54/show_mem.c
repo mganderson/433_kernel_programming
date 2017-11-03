@@ -54,7 +54,7 @@ void show_mem(unsigned int filter)
 
 /* Michael Anderson: Attempt to recreate /proc/slabinfo information (HW 5) */
 void show_caches() {
-	printk("Michael Anderson HW 5: Inside show_caches() in show_mem().c";
+	printk("Michael Anderson HW 5: Inside show_caches() in show_mem().c");
 	int i;
 	/* KMALLOC_SHIFT_HIGH is macro defined in slab.h
 	 * and kmalloc_caches is declared with size KMALLOC_SHIFT_HIGH + 1
