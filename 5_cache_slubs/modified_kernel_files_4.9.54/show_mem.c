@@ -55,6 +55,14 @@ void show_mem(unsigned int filter)
 /* Michael Anderson: Attempt to recreate /proc/slabinfo information (HW 5) */
 void show_caches() {
 	printk("Michael Anderson HW 5: Inside show_caches() in show_mem().c";
+	int i;
+	/* KMALLOC_SHIFT_HIGH is macro defined in slab.h
+	 * and kmalloc_caches is declared with size KMALLOC_SHIFT_HIGH + 1
+	 */
+	for (i=0; i <= KMALLOC_SHIFT_HIGH; i++) {
+		printk("HW5: %s", kmalloc_caches[i]->name);
+	}
+	return;
 }
 
 /* Michael Anderson: Attempt to recreate /proc/buddyinfo information 
@@ -63,7 +71,7 @@ void show_caches() {
 void show_buddyinfo() {
 	printk("Michael Anderson: Inside show_buddyinfo() within show_mem.c\n");
 	
-	// Each numa node is an entry in pgdat (?)
+	// Each (N)UMA node is an entry in pgdat (?)
 	// We expect to have only 1 node in pgdat
 	pg_data_t *pgdat;
 	int nodeCount;
