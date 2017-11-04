@@ -666,6 +666,7 @@ asmlinkage __visible void __init start_kernel(void)
 	/* END EDIT HW4 */
 
 	/* Do the rest non-__init'ed, we're now alive */
+	//show_caches();
 	rest_init();
 }
 
@@ -959,7 +960,7 @@ static int __ref kernel_init(void *unused)
 	rcu_end_inkernel_boot();
 
 	/* Modified by MICHAEL ANDERSON HW5 */
-	show_slabinfo();
+	show_caches();
 
 	if (ramdisk_execute_command) {
 		ret = run_init_process(ramdisk_execute_command);

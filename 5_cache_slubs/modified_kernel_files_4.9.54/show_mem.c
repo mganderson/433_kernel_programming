@@ -9,6 +9,7 @@
 #include <linux/quicklist.h>
 #include <linux/cma.h>
 #include <linux/slab.h>
+#include <linux/slab_def.h>
 
 void show_mem(unsigned int filter)
 {
