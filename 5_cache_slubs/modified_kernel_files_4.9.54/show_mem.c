@@ -61,7 +61,7 @@ void show_caches() {
 	 * and kmalloc_caches is declared with size KMALLOC_SHIFT_HIGH + 1
 	 */
 	for (i=0; i <= KMALLOC_SHIFT_HIGH; i++) {
-		printk("HW5: %s", kmalloc_caches[i]->name);
+		printk("HW5: %s", &kmalloc_caches[i]->name);
 	}
 	return;
 }

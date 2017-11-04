@@ -965,6 +965,8 @@ static int __ref kernel_init(void *unused)
 	if (ramdisk_execute_command) {
 		ret = run_init_process(ramdisk_execute_command);
 		if (!ret)
+			/* Modified by MICHAEL ANDERSON HW5 */
+			show_caches();
 			return 0;
 		pr_err("Failed to execute %s (error %d)\n",
 		       ramdisk_execute_command, ret);
@@ -979,6 +981,8 @@ static int __ref kernel_init(void *unused)
 	if (execute_command) {
 		ret = run_init_process(execute_command);
 		if (!ret)
+			/* Modified by MICHAEL ANDERSON HW5 */
+			show_caches();
 			return 0;
 		panic("Requested init %s failed (error %d).",
 		      execute_command, ret);
@@ -987,6 +991,8 @@ static int __ref kernel_init(void *unused)
 	    !try_to_run_init_process("/etc/init") ||
 	    !try_to_run_init_process("/bin/init") ||
 	    !try_to_run_init_process("/bin/sh"))
+		/* Modified by MICHAEL ANDERSON HW5 */
+		show_caches();
 		return 0;
 
 	panic("No working init found.  Try passing init= option to kernel. "
