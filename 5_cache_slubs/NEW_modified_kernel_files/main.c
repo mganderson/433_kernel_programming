@@ -956,6 +956,9 @@ static int __ref kernel_init(void *unused)
 
 	flush_delayed_fput();
 
+	// Added for homework 5 - Michael Anderson
+	show_caches();	
+
 	rcu_end_inkernel_boot();
 
 	if (ramdisk_execute_command) {

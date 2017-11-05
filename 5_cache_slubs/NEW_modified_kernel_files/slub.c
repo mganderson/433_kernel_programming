@@ -39,6 +39,37 @@
 
 #include "internal.h"
 
+/* Michael Anderson: Attempt to recreate /proc/slabinfo information (HW 5) */
+void show_caches() {
+	printk("Michael Anderson HW 5: Inside show_caches() in show_mem().c");
+	int i, j;
+
+	/* Pointer to an element within kmalloc_caches 
+	 * (referred to in the kernel code often as 's')
+	 */
+	struct kmem_cache *s;
+
+	/* Pointer to an element within node[MAX_NUMNODES]
+	 * in a given kmem_cache struct
+	 */
+	struct kmem_cache_node *n;
+
+	/* KMALLOC_SHIFT_HIGH is macro defined in slab.h
+	 * and kmalloc_caches is declared with size KMALLOC_SHIFT_HIGH + 1
+	 * (that is 13 + 1)
+	 */
+	for (i=0; i <= KMALLOC_SHIFT_HIGH; i++) {
+		s = kmalloc_caches[i];
+		// Check if s is null pointer; skip if so
+		if (!s) {
+			continue;
+		}
+		printk("HW5: %s", s->name);
+		
+	}
+	return;
+}
+
 /*
  * Lock order:
  *   1. slab_mutex (Global Mutex)
