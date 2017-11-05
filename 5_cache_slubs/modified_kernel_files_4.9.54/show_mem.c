@@ -57,11 +57,29 @@ void show_mem(unsigned int filter)
 void show_caches() {
 	printk("Michael Anderson HW 5: Inside show_caches() in show_mem().c");
 	int i;
+
+	/* Pointer to an element within kmalloc_caches 
+	 * (referred to in the kernel code often as 's')
+	 */
+	struct kmem_cache *s;
+
+	/* Pointer to an element within node[MAX_NUMNODES]
+	 * in a given kmem_cache struct
+	 */
+	struct kmem_cache_node *n;
+
 	/* KMALLOC_SHIFT_HIGH is macro defined in slab.h
 	 * and kmalloc_caches is declared with size KMALLOC_SHIFT_HIGH + 1
+	 * (that is 13 + 1)
 	 */
 	for (i=0; i <= KMALLOC_SHIFT_HIGH; i++) {
-		printk("HW5: %s", &kmalloc_caches[i]->name);
+		s = kmalloc_caches[i];
+		// Check if s is null pointer; skip if so
+		if (!s) {
+			continue;
+		}
+		printk("HW5: %s", s->name);
+		
 	}
 	return;
 }
