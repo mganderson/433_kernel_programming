@@ -40,8 +40,8 @@
 #include "internal.h"
 
 /* Michael Anderson: Attempt to recreate /proc/slabinfo information (HW 5) */
-void show_caches() {
-	printk("Michael Anderson HW 5: Inside show_caches() in show_mem().c");
+void show_caches(void) {
+	printk("Michael Anderson HW5: Inside show_caches() in show_mem().c");
 	int i, j;
 
 	/* Pointer to an element within kmalloc_caches 
@@ -54,18 +54,54 @@ void show_caches() {
 	 */
 	struct kmem_cache_node *n;
 
-	/* KMALLOC_SHIFT_HIGH is macro defined in slab.h
+	unsigned long active_objs, num_objs, num_slabs, objsize, objperslab, pagesperslab;
+
+	/* Print runcated version of /slabinfo's column headers: */
+	printk("HW5: # name    <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab>");	
+
+	/* KMALLOC_SHIFT_HIGH is macro defined in slab.h that should return 13
 	 * and kmalloc_caches is declared with size KMALLOC_SHIFT_HIGH + 1
 	 * (that is 13 + 1)
 	 */
 	for (i=0; i <= KMALLOC_SHIFT_HIGH; i++) {
+		active_objs = num_objs = num_slabs = objsize = objperslab = pagesperslab = 0;	
 		s = kmalloc_caches[i];
 		// Check if s is null pointer; skip if so
 		if (!s) {
 			continue;
 		}
-		printk("HW5: %s", s->name);
-		
+		/* We must iterate over each kmem_cache_node to calculate total number
+		 * of slabs and the total number of objects (though MAX_NUMNODES, which
+		 * is defined in include/linux/numa.h will presumably just return 1 since
+		 * the machines we are using have a single node
+		 */ 
+		for (j=0; j<MAX_NUMNODES; j++) {
+			n = s->node[j];
+			// Check if n is null pointer, skip if so
+			if (!n) {
+				continue;
+			}
+			/* atomic_long_t, which nr_slabs and total_objects within kmem_cache_node
+			 * are, is defined in ident/atomic_long_t and acts basically like a
+			 * signed long integer, but has a field count that we will access
+			 */
+			num_slabs += (long) n->nr_slabs.counter;
+			num_objs += (long) n->total_objects.counter;
+		}
+		// We can get the size of the object directly from kmem_cache
+		objsize = s->object_size;
+		// We simply divide num_objs by num_slabs to get objects per slab
+		objperslab = num_objs / num_slabs;
+		// We divide objsize * num_objs by 4k (the size of a page) and then add
+		// 1 (to round up, not down) to get pages per slab:
+		pagesperslab = objsize * num_objs / (1<<12) + 1;
+		printk("HW5: %s:\t%lu\t%lu%lu%lu", 
+		    	s->name, 	//Cache name
+			num_objs,	
+			objsize,		
+			objperslab,
+			pagesperslab
+			);
 	}
 	return;
 }
