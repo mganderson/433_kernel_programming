@@ -41,7 +41,6 @@
 
 /* Michael Anderson: Attempt to recreate /proc/slabinfo information (HW 5) */
 void show_caches(void) {
-	printk("Michael Anderson HW5: Inside show_caches() in show_mem().c");
 	int i, j;
 
 	/* Pointer to an element within kmalloc_caches 
@@ -55,7 +54,8 @@ void show_caches(void) {
 	struct kmem_cache_node *n;
 
 	unsigned long active_objs, num_objs, num_slabs, objsize, objperslab, pagesperslab;
-
+    
+    	printk("Michael Anderson HW5: Inside show_caches() in show_mem().c");
 	/* Print runcated version of /slabinfo's column headers: */
 	printk("HW5: # name    <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab>");	
 
@@ -75,7 +75,8 @@ void show_caches(void) {
 		 * is defined in include/linux/numa.h will presumably just return 1 since
 		 * the machines we are using have a single node
 		 */ 
-		for (j=0; j<MAX_NUMNODES; j++) {
+        		
+        for (j=0; j<MAX_NUMNODES; j++) {
 			n = s->node[j];
 			// Check if n is null pointer, skip if so
 			if (!n) {
@@ -85,17 +86,24 @@ void show_caches(void) {
 			 * are, is defined in ident/atomic_long_t and acts basically like a
 			 * signed long integer, but has a field count that we will access
 			 */
-			num_slabs += (long) n->nr_slabs.counter;
-			num_objs += (long) n->total_objects.counter;
+ 
+			// num_slabs += (long) n->nr_slabs.counter;
+			// num_objs += (long) n->total_objects.counter;
+			num_slabs += atomic_long_read(&(n->nr_slabs));
+			num_objs += atomic_long_read(&(n->total_objects));
 		}
+
+        
 		// We can get the size of the object directly from kmem_cache
-		objsize = s->object_size;
-		// We simply divide num_objs by num_slabs to get objects per slab
-		objperslab = num_objs / num_slabs;
-		// We divide objsize * num_objs by 4k (the size of a page) and then add
+		objsize = s->object_size; //size of object WITHOUT METADATA
+		// We simply divide num_objs by num_slabs to get objects per slab		
+       		if (num_slabs) { 
+            		objperslab = num_objs / num_slabs;
+        	}   		
+        	// We divide objsize * num_objs by 4k (the size of a page) and then add
 		// 1 (to round up, not down) to get pages per slab:
 		pagesperslab = objsize * num_objs / (1<<12) + 1;
-		printk("HW5: %s:\t%lu\t%lu%lu%lu", 
+		printk("HW5:s->name:  %s:\t num_objs: %lu\t objsize: %lu\t objperslab: %lu\t pagesperslab: %lu", 
 		    	s->name, 	//Cache name
 			num_objs,	
 			objsize,		
