@@ -89,8 +89,8 @@ void show_caches(void) {
  
 			// num_slabs += (long) n->nr_slabs.counter;
 			// num_objs += (long) n->total_objects.counter;
-			num_slabs += atomic_long_read(&(n->nr_slabs));
-			num_objs += atomic_long_read(&(n->total_objects));
+			//num_slabs += atomic_long_read(&(n->nr_slabs));
+			//num_objs += atomic_long_read(&(n->total_objects));
 		}
 
         
