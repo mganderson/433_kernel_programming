@@ -41,7 +41,7 @@
 
 /* Michael Anderson: Attempt to recreate /proc/slabinfo information (HW 5) */
 void show_caches(void) {
-	int i, j;
+	int i, j, node_num;
 
 	/* Pointer to an element within kmalloc_caches 
 	 * (referred to in the kernel code often as 's')
@@ -75,9 +75,8 @@ void show_caches(void) {
 		 * is defined in include/linux/numa.h will presumably just return 1 since
 		 * the machines we are using have a single node
 		 */ 
-        		
-        for (j=0; j<MAX_NUMNODES; j++) {
-			n = s->node[j];
+        	for_each_kmem_cache_node(s, node_num, n) {		
+        	// for (j=0; j<MAX_NUMNODES; j++) {
 			// Check if n is null pointer, skip if so
 			if (!n) {
 				continue;
@@ -86,7 +85,11 @@ void show_caches(void) {
 			 * are, is defined in ident/atomic_long_t and acts basically like a
 			 * signed long integer, but has a field count that we will access
 			 */
- 
+ 			//num_slabs += node_nr_slabs(n);
+			//num_objs += node_nr_objs(n);
+			num_slabs += (long) atomic_long_read(&n->nr_slabs);
+			num_objs += (long) atomic_long_read(&n->total_objects);
+			
 			// num_slabs += (long) n->nr_slabs.counter;
 			// num_objs += (long) n->total_objects.counter;
 			//num_slabs += atomic_long_read(&(n->nr_slabs));
