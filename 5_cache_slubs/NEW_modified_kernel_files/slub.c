@@ -103,9 +103,9 @@ void show_caches(void) {
        		if (num_slabs) { 
             		objperslab = num_objs / num_slabs;
         	}   		
-        	// We divide objsize * num_objs by 4k (the size of a page) and then add
+        	// We divide objsize * objsperslab by 4k (the size of a page) and then add
 		// 1 (to round up, not down) to get pages per slab:
-		pagesperslab = objsize * num_objs / (1<<12) + 1;
+		pagesperslab = objsize * objsperslab / (1<<12) + 1;
 		printk("HW5:s->name:  %s:\t num_objs: %lu\t objsize: %lu\t objperslab: %lu\t pagesperslab: %lu", 
 		    	s->name, 	//Cache name
 			num_objs,	
