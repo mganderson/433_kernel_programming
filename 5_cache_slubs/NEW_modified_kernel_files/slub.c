@@ -43,28 +43,31 @@
 void show_caches(void) {
 	int i, node_num;
 
-	/* Pointer to an element within kmalloc_caches 
+	/* 
+	 * Pointer to an element within kmalloc_caches 
 	 * (referred to in the kernel code often as 's')
 	 */
 	struct kmem_cache *s;
 
-	/* Pointer to an element within node[MAX_NUMNODES]
+	/* 
+	 * Pointer to an element within node[MAX_NUMNODES]
 	 * in a given kmem_cache struct
 	 */
 	struct kmem_cache_node *n;
 	struct page * page_pointer;
 	unsigned long active_objs, num_objs, num_slabs, objsize, objperslab, pagesperslab, objs_free;
     
-    	printk("Michael Anderson HW5: Inside show_caches() in show_mem().c");
-	/* Print runcated version of /slabinfo's column headers: */
-	printk("HW5: # name    <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab>");	
+	printk("Michael Anderson HW5: Inside new function show_caches() in slub.c");
+	/* Print proc/slabinfo's column headers: */
+	printk("HW5: # name    <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab>"
+               " : tunables <limit> <batchcount> <sharedfactor> : slabdata <active_slabs> <num_slabs>");	
 
 	/* KMALLOC_SHIFT_HIGH is macro defined in slab.h that should return 13
 	 * and kmalloc_caches is declared with size KMALLOC_SHIFT_HIGH + 1
 	 * (that is 13 + 1)
 	 */
 	for (i=0; i <= KMALLOC_SHIFT_HIGH; i++) {
-		active_objs = num_objs = num_slabs = objsize = objperslab = pagesperslab = 0;	
+		active_objs = objs_free = num_objs = num_slabs = objsize = objperslab = pagesperslab = 0;	
 		s = kmalloc_caches[i];
 		// Check if s is null pointer; skip if so
 		if (!s) {
@@ -130,13 +133,20 @@ void show_caches(void) {
         	// We divide objsize * objsperslab by 4k (the size of a page) and round
 		// up (by adding divisor-1 to dividend) to get pages per slab:
 		pagesperslab = (objsize * objperslab + (1<<12) - 1) / (1<<12);
-		printk("HW5:s->name:  %s:\t active objs: %lu\tnum_objs: %lu\t objsize: %lu\t objperslab: %lu\t pagesperslab: %lu", 
+		// printk("HW5:s->name:  %s:\t active objs: %lu\tnum_objs: %lu\t objsize: "
+		//        "%lu\t objperslab: %lu\t pagesperslab: %lu", 
+		printk("HW5:\t%s\t%lu\t%lu\t%lu\t%lu\t%lu : tunables %d\t%d\t%d : slabdata %lu\t%lu",
 		    	s->name, 	//Cache name
 			active_objs,
 			num_objs,	
 			objsize,		
 			objperslab,
-			pagesperslab
+			pagesperslab,
+			0, 		// Per linux man page on slabinfo, there are no tunables
+			0, 		// when using the default SLUB allocator.  Therefore,
+			0, 		// these fields display 0
+			num_slabs,	
+			num_slabs
 			);
 	}
 	return;
