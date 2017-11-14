@@ -41,7 +41,7 @@
 
 /* Michael Anderson: Attempt to recreate /proc/slabinfo information (HW 5) */
 void show_caches(void) {
-	int i, j, node_num;
+	int i, node_num;
 
 	/* Pointer to an element within kmalloc_caches 
 	 * (referred to in the kernel code often as 's')
@@ -52,8 +52,8 @@ void show_caches(void) {
 	 * in a given kmem_cache struct
 	 */
 	struct kmem_cache_node *n;
-
-	unsigned long active_objs, num_objs, num_slabs, objsize, objperslab, pagesperslab;
+	struct page * page_pointer;
+	unsigned long active_objs, num_objs, num_slabs, objsize, objperslab, pagesperslab, objs_free;
     
     	printk("Michael Anderson HW5: Inside show_caches() in show_mem().c");
 	/* Print runcated version of /slabinfo's column headers: */
@@ -89,25 +89,50 @@ void show_caches(void) {
 			//num_objs += node_nr_objs(n);
 			num_slabs += (long) atomic_long_read(&n->nr_slabs);
 			num_objs += (long) atomic_long_read(&n->total_objects);
-			
 			// num_slabs += (long) n->nr_slabs.counter;
 			// num_objs += (long) n->total_objects.counter;
-			//num_slabs += atomic_long_read(&(n->nr_slabs));
-			//num_objs += atomic_long_read(&(n->total_objects));
+			// num_slabs += atomic_long_read(&(n->nr_slabs));
+			// num_objs += atomic_long_read(&(n->total_objects));
+			
+			/* n->partial is struct of type list_head 
+			 * We can use a built-in macro defined in list.h
+			 * (list_for_each_entry) to iterate over the list of
+			 * pages - See below documentation from list.h
+			 *
+			 * list_for_each_entry(pos, head, member)
+			 * @pos: the type * to use as the loop cursor
+			 *	-> we will pass uninitialized page_pointer
+			 * @head: the head of the list
+			 *	-> n->partial is the head of the list
+			 * @member: name of the list_head within the struct
+			 *	-> Within struct page (mm_types.h) lru is list_head
+			 *	-> Weirdly enough, "the kernel's implementation of
+			 *	   linked lists gives the illusion that the list is
+			 *	   contained in the item it links" (here, page structs)
+			 *	-> More kernel LL info at isis.poly.edu/kulesh/stuff/src/klist
+			 */
+			list_for_each_entry(page_pointer, &n->partial, lru) {
+				objs_free += page_pointer->objects - page_pointer->inuse;
+			}	
 		}
-
-        
+		
+		/* We have a count of free objects by iterating over pages in 
+        	 * each kmem_cache_node.  We can get the number of active objs
+		 * by subtracting objs_free from the total num_objs
+		 */
+		active_objs = num_objs - objs_free;
 		// We can get the size of the object directly from kmem_cache
 		objsize = s->object_size; //size of object WITHOUT METADATA
 		// We simply divide num_objs by num_slabs to get objects per slab		
        		if (num_slabs) { 
             		objperslab = num_objs / num_slabs;
         	}   		
-        	// We divide objsize * objsperslab by 4k (the size of a page) and then add
-		// 1 (to round up, not down) to get pages per slab:
-		pagesperslab = objsize * objsperslab / (1<<12) + 1;
-		printk("HW5:s->name:  %s:\t num_objs: %lu\t objsize: %lu\t objperslab: %lu\t pagesperslab: %lu", 
+        	// We divide objsize * objsperslab by 4k (the size of a page) and round
+		// up (by adding divisor-1 to dividend) to get pages per slab:
+		pagesperslab = (objsize * objperslab + (1<<12) - 1) / (1<<12);
+		printk("HW5:s->name:  %s:\t active objs: %lu\tnum_objs: %lu\t objsize: %lu\t objperslab: %lu\t pagesperslab: %lu", 
 		    	s->name, 	//Cache name
+			active_objs,
 			num_objs,	
 			objsize,		
 			objperslab,
